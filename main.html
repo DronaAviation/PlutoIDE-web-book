@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pluto IDE – Project Book</title>
+  <link href="assets/lib/prism-tomorrow.min.css" rel="stylesheet" />
+  <script src="assets/lib/prism.min.js"></script>
+  <script src="assets/lib/prism-c.min.js"></script>
+  <script src="assets/lib/prism-cpp.min.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #0d1117;
+      --bg-side: #161b22;
+      --bg-card: #1c2128;
+      --border: #30363d;
+      --text-main: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #ffb627;
+      --code-bg: #0b1220;
+      --sidebar-width: 280px;
+    }
+
+    /* ===== RESET ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      overflow: hidden;
+      line-height: 1.65;
+    }
+
+    /* ===== TYPOGRAPHY ===== */
+    h1 {
+      font-size: 32px;
+      margin: 0 0 24px 0;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h2 {
+      font-size: 24px;
+      margin: 32px 0 16px;
+    }
+
+    h3 {
+      font-size: 18px;
+      margin: 24px 0 12px;
+    }
+
+    p {
+      margin-bottom: 16px;
+      line-height: 1.7;
+      color: #c9d1d9;
+    }
+
+    ul,
+    ol {
+      margin: 12px 0 18px 22px;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    code {
+      font-family: 'Fira Code', 'Consolas', monospace;
+      background: rgba(56, 189, 248, 0.1);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 0.88em;
+      color: #58a6ff;
+      border: 1px solid rgba(56, 189, 248, 0.15);
+    }
+
+    pre[class*="language-"] {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 20px 0;
+      overflow-x: auto;
+      line-height: 1.55;
+    }
+
+    pre code,
+    pre[class*="language-"] code {
+      background: none;
+      padding: 0;
+      border: none;
+      color: inherit;
+      color: #c9d1d9;
+    }
+
+    /* ===== LAYOUT ===== */
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+
+    .main {
+      flex: 1;
+      padding: 40px;
+      overflow-y: auto;
+      margin-left: var(--sidebar-width);
+    }
+
+    .content {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    /* ===== CARD ===== */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 36px;
+    }
+
+    .card > *:last-child {
+      margin-bottom: 0;
+    }
+
+    /* ===== CALLOUTS ===== */
+    .callout {
+      border-left: 4px solid var(--accent);
+      background: rgba(255, 182, 39, 0.06);
+      padding: 14px 18px;
+      margin: 18px 0;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .callout-warn {
+      border-left-color: #f85149;
+      background: rgba(248, 81, 73, 0.06);
+    }
+
+    .callout-success {
+      border-left-color: #3fb950;
+      background: rgba(63, 185, 80, 0.06);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--accent);
+    }
+
+    .callout-warn .callout-title { color: #f85149; }
+    .callout-success .callout-title { color: #3fb950; }
+    .callout p { margin: 0; }
+
+    /* ===== TABLES ===== */
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+    th { color: var(--accent); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    td { color: #c9d1d9; }
+
+    /* ===== BADGES ===== */
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 16px;
+    }
+
+    .badge-beginner { background: rgba(63,185,80,0.15); color: #3fb950; border: 1px solid rgba(63,185,80,0.3); }
+    .badge-intermediate { background: rgba(56,139,253,0.15); color: #388bfd; border: 1px solid rgba(56,139,253,0.3); }
+
+    /* ===== STEPS ===== */
+    .step { display: flex; gap: 14px; margin: 20px 0; }
+    .step-n {
+      flex-shrink: 0; width: 32px; height: 32px;
+      border-radius: 50%; background: var(--accent); color: #000;
+      font-weight: 700; font-size: 0.85rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .step-body { flex: 1; }
+    .step-body h4 { margin-top: 4px; color: var(--text-main); font-size: 15px; }
+
+    /* ===== IMAGES ===== */
+    .img-wrap { margin: 20px 0; text-align: center; }
+    .img-wrap img { max-width: 100%; border-radius: 8px; border: 1px solid var(--border); }
+    .img-caption { font-size: 0.82rem; color: var(--text-muted); margin-top: 8px; font-style: italic; }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: var(--sidebar-width);
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      padding: 24px 18px;
+      background: linear-gradient(180deg, #0d1117 0%, #0b0f14 100%);
+      border-right: 1px solid rgba(255,255,255,0.08);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      z-index: 50;
+    }
+
+    .sidebar-brand {
+      margin-bottom: 28px;
+    }
+
+    .sidebar-brand h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 4px;
+      border: none;
+      padding: 0;
+    }
+
+    .sidebar-brand p {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-bottom: 0;
+    }
+
+    .sidebar-scroll {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sidebar-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.08);
+      margin: 18px 0;
+    }
+
+    .nav-group {
+      margin-top: 18px;
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+
+    .nav-item {
+      display: block;
+      padding: 10px 14px;
+      margin-bottom: 2px;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #cbd5e1;
+      text-decoration: none;
+      line-height: 1.4;
+      transition: background 0.15s ease, color 0.15s ease;
+      border-left: 3px solid transparent;
+    }
+
+    .nav-item:hover {
+      background: rgba(255,255,255,0.06);
+      color: #ffffff;
+    }
+
+    .nav-item.active {
+      background: rgba(56, 189, 248, 0.15);
+      color: #58a6ff;
+      font-weight: 600;
+      border-left: 3px solid #58a6ff;
+    }
+
+    .nav-item.sub {
+      padding-left: 30px;
+      font-size: 13.5px;
+      color: #9ca3af;
+    }
+
+    .sub-menu {
+      padding-left: 15px;
+      display: none;
+    }
+
+    .sub-menu.open {
+      display: block;
+    }
+
+    .sidebar-footer {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 20px;
+    }
+
+    .board-selector label {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .board-selector select {
+      width: 100%;
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 8px;
+      border-radius: 6px;
+    }
+
+    /* ===== FOOTER NAV ===== */
+    .nav-buttons {
+      position: fixed;
+      left: calc(var(--sidebar-width) + 40px);
+      right: 40px;
+      bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(22, 27, 34, 0.95);
+      border: 1px solid var(--border);
+      padding: 12px 20px;
+      border-radius: 12px;
+      backdrop-filter: blur(8px);
+      z-index: 100;
+    }
+
+    .nav-btn {
+      background: #21262d;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .nav-btn:hover {
+      background: #30363d;
+    }
+
+    .nav-btn.hidden {
+      visibility: hidden;
+    }
+
+    .pg-indicator {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* ===== IMAGE MAGNIFICATION ===== */
+    .zoomable {
+      cursor: zoom-in;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .zoomable:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+    }
+
+    #img-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.88);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    #img-modal img {
+      max-width: 92vw;
+      max-height: 92vh;
+      border-radius: 10px;
+      cursor: zoom-out;
+      background: #000;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .nav-buttons { left: 20px; right: 20px; }
+      .main { padding: 20px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <h1>Pluto Project Book</h1>
+        <p>Using Pluto IDE</p>
+      </div>
+
+      <nav class="sidebar-scroll">
+        <div class="nav-group">Basics</div>
+
+        <a href="#intro" class="nav-item">Introduction</a>
+        <a href="#compatibility" class="nav-item">Compatibility</a>
+        <a href="#platform" class="nav-item">Platform</a>
+        <div class="sub-menu" id="platform-sub">
+          <a href="#primus" class="nav-item sub">Primus Hardware</a>
+          <a href="#magis" class="nav-item sub">Magis Software</a>
+        </div>
+
+        <div class="nav-group">Development</div>
+        <a href="#tinkering" class="nav-item">Ease of Tinkering</a>
+        <div class="sub-menu" id="tinkering-sub">
+          <a href="#tinkering-loop" class="nav-item sub">Tinkering Loop</a>
+          <a href="#api-ref" class="nav-item sub">API Reference</a>
+        </div>
+
+        <div class="nav-group">Setup</div>
+        <a href="#pluto-ide" class="nav-item">Pluto IDE Setup</a>
+        <a href="#dev-mode" class="nav-item">Developer Mode</a>
+
+        <div class="nav-group">Projects</div>
+        <div id="projects-nav"></div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="board-selector">
+          <label><h3>Select Flightcontroller</h3></label>
+          <select id="board-select">
+            <option value="primus-x2">Primus X2 / V5</option>
+          </select>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ===== MAIN ===== -->
+    <main class="main" id="main-scroll">
+      <div class="content" id="main-content"></div>
+    </main>
+  </div>
+
+  <div class="nav-buttons">
+    <a id="btn-prev" class="nav-btn">&larr; Back</a>
+    <span id="pg-indicator" class="pg-indicator"></span>
+    <a id="btn-next" class="nav-btn">Next &rarr;</a>
+  </div>
+
+  <div id="img-modal">
+    <img id="img-modal-img" alt="">
+  </div>
+
+  <script>
+    let boardData = {};
+    let activeOrder = [];
+
+    const boardSelect = document.getElementById('board-select');
+    const contentArea = document.getElementById('main-content');
+    const prevBtn = document.getElementById('btn-prev');
+    const nextBtn = document.getElementById('btn-next');
+    const pgIndicator = document.getElementById('pg-indicator');
+    const platformSub = document.getElementById('platform-sub');
+    const tinkeringSub = document.getElementById('tinkering-sub');
+
+    async function loadContent() {
+      const board = boardSelect.value;
+      const res = await fetch(`assets/${board}.json`);
+      boardData = await res.json();
+
+      activeOrder = boardData._meta?.order || Object.keys(boardData).filter(k => k !== "_meta");
+
+      renderProjectsNav();
+
+      const hash = location.hash.replace('#', '');
+      const current = activeOrder.includes(hash) ? hash : activeOrder[0];
+
+      renderSection(current);
+    }
+
+    function renderProjectsNav() {
+      const nav = document.getElementById('projects-nav');
+      nav.innerHTML = '';
+
+      const groups = boardData._meta?.groups;
+
+      if (!groups) {
+        activeOrder
+          .filter(id => /^p\d+/.test(id))
+          .forEach(id => {
+            const a = document.createElement('a');
+            a.href = `#${id}`;
+            a.className = 'nav-item';
+            a.textContent = boardData[id].title;
+            nav.appendChild(a);
+          });
+        return;
+      }
+
+      groups.forEach(group => {
+        const heading = document.createElement('div');
+        heading.className = 'nav-group';
+        heading.textContent = group.title;
+        nav.appendChild(heading);
+
+        group.items.forEach(id => {
+          if (!boardData[id]) return;
+
+          const a = document.createElement('a');
+          a.href = `#${id}`;
+          a.className = 'nav-item';
+          a.textContent = boardData[id].title;
+          nav.appendChild(a);
+        });
+      });
+    }
+
+    function renderSection(id) {
+      const data = boardData[id];
+      if (!data) return;
+
+      contentArea.innerHTML = `<h1>${data.title}</h1>${data.html}`;
+
+      // PrismJS re-highlight
+      Prism.highlightAllUnder(contentArea);
+
+      document.querySelectorAll('.nav-item').forEach(n =>
+        n.classList.toggle('active', n.getAttribute('href') === `#${id}`)
+      );
+
+      platformSub.classList.toggle('open', ['platform', 'primus', 'magis'].includes(id));
+      tinkeringSub.classList.toggle('open', ['tinkering', 'tinkering-loop', 'api-ref'].includes(id));
+
+      updatePagination(id);
+      enableImageZoom();
+
+      document.getElementById('main-scroll').scrollTo(0, 0);
+    }
+
+    function updatePagination(id) {
+      const i = activeOrder.indexOf(id);
+
+      prevBtn.classList.toggle('hidden', i <= 0);
+      nextBtn.classList.toggle('hidden', i >= activeOrder.length - 1);
+
+      if (i > 0) prevBtn.href = `#${activeOrder[i - 1]}`;
+      if (i < activeOrder.length - 1) nextBtn.href = `#${activeOrder[i + 1]}`;
+      pgIndicator.textContent = `${i + 1} / ${activeOrder.length}`;
+    }
+
+    boardSelect.onchange = () => {
+      localStorage.setItem('board', boardSelect.value);
+      loadContent();
+    };
+
+    window.onhashchange = () => renderSection(location.hash.replace('#', ''));
+    window.onload = () => {
+      boardSelect.value = localStorage.getItem('board') || boardSelect.value;
+      loadContent();
+    };
+
+    function enableImageZoom() {
+      document.querySelectorAll('.content img').forEach(img => {
+        img.classList.add('zoomable');
+        img.onclick = () => {
+          const modal = document.getElementById('img-modal');
+          const modalImg = document.getElementById('img-modal-img');
+          modalImg.src = img.src;
+          modalImg.alt = img.alt || '';
+          modal.style.display = 'flex';
+        };
+      });
+    }
+
+    document.getElementById('img-modal').onclick = function () {
+      this.style.display = 'none';
+    };
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        document.getElementById('img-modal').style.display = 'none';
+      }
+      const hash = location.hash.replace('#', '');
+      const i = activeOrder.indexOf(hash);
+      if (e.key === 'ArrowRight' && i < activeOrder.length - 1) location.hash = activeOrder[i + 1];
+      if (e.key === 'ArrowLeft' && i > 0) location.hash = activeOrder[i - 1];
+    });
+  </script>
+
+</body>
+</html>
