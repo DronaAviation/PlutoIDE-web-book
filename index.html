@@ -391,14 +391,102 @@
 
     /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
-      .sidebar { display: none; }
-      .nav-buttons { left: 20px; right: 20px; }
-      .main { padding: 20px; }
+      :root {
+        --sidebar-width: 100%;
+      }
+      
+      .sidebar {
+        display: none;
+        width: 100%;
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 1000;
+        padding: 60px 18px 18px;
+      }
+
+      .sidebar.open {
+        display: flex;
+      }
+
+      .sidebar-toggle {
+        display: flex;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 1001;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 12px;
+        cursor: pointer;
+        color: var(--text-main);
+        font-size: 18px;
+      }
+
+      .nav-buttons {
+        left: 20px;
+        right: 20px;
+        bottom: 16px;
+        padding: 10px 14px;
+      }
+
+      .main {
+        padding: 20px;
+        margin-left: 0;
+      }
+
+      .content {
+        padding: 0;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .nav-btn {
+        padding: 8px 14px;
+        font-size: 13px;
+      }
+
+      .pg-indicator {
+        font-size: 0.7rem;
+      }
+
+      .step {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .step-n {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+      }
+
+      table {
+        font-size: 13px;
+      }
+
+      th, td {
+        padding: 8px 10px;
+      }
     }
   </style>
 </head>
 
 <body>
+
+  <button class="sidebar-toggle" id="sidebarToggle" style="display: none;">☰</button>
 
   <div class="container">
 
@@ -589,12 +677,44 @@
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') {
         document.getElementById('img-modal').style.display = 'none';
+        document.querySelector('.sidebar').classList.remove('open');
       }
       const hash = location.hash.replace('#', '');
       const i = activeOrder.indexOf(hash);
       if (e.key === 'ArrowRight' && i < activeOrder.length - 1) location.hash = activeOrder[i + 1];
       if (e.key === 'ArrowLeft' && i > 0) location.hash = activeOrder[i - 1];
     });
+
+    // Mobile sidebar toggle
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.querySelector('.sidebar');
+
+    function checkMobile() {
+      if (window.innerWidth <= 768) {
+        sidebarToggle.style.display = 'flex';
+        sidebar.classList.remove('open');
+      } else {
+        sidebarToggle.style.display = 'none';
+        sidebar.classList.add('open');
+      }
+    }
+
+    sidebarToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+    });
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', (e) => {
+      if (window.innerWidth <= 768 && 
+          sidebar.classList.contains('open') &&
+          !sidebar.contains(e.target) &&
+          e.target !== sidebarToggle) {
+        sidebar.classList.remove('open');
+      }
+    });
+
+    window.addEventListener('resize', checkMobile);
+    window.addEventListener('load', checkMobile);
   </script>
 
 </body>
