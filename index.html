@@ -201,6 +201,50 @@
     .img-wrap img { max-width: 100%; border-radius: 8px; border: 1px solid var(--border); }
     .img-caption { font-size: 0.82rem; color: var(--text-muted); margin-top: 8px; font-style: italic; }
 
+    /* ===== SCREENSHOTS + PLACEHOLDERS ===== */
+    .shot { margin: 22px 0; }
+    .shot img {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      display: block;
+    }
+    .shot-ph {
+      border: 2px dashed #3a4350;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(255, 182, 39, 0.05), rgba(56, 189, 248, 0.05));
+      padding: 38px 20px;
+      text-align: center;
+    }
+    .shot-ph .ph-ico { font-size: 30px; opacity: 0.75; }
+    .shot-ph .ph-label { font-weight: 700; color: var(--text-main); margin-top: 8px; font-size: 14px; }
+    .shot-ph .ph-path {
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-size: 0.78rem;
+      color: var(--accent);
+      margin-top: 6px;
+      word-break: break-all;
+    }
+    .shot-cap { font-size: 0.82rem; color: var(--text-muted); margin-top: 8px; text-align: center; font-style: italic; }
+
+    /* two-up board gallery */
+    .board-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .board-gallery figure {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+    .board-gallery img { width: 100%; border-radius: 6px; }
+    .board-gallery figcaption { font-size: 0.82rem; color: var(--text-muted); margin-top: 8px; }
+    .board-gallery figcaption b { color: var(--text-main); display: block; font-size: 0.9rem; }
+
     /* ===== SIDEBAR ===== */
     .sidebar {
       width: var(--sidebar-width);
@@ -516,8 +560,12 @@
           <a href="#api-ref" class="nav-item sub">API Reference</a>
         </div>
 
-        <div class="nav-group">Setup</div>
-        <a href="#pluto-ide" class="nav-item">Pluto IDE Setup</a>
+        <div class="nav-group">Pluto IDE Guide</div>
+        <a href="#pluto-ide" class="nav-item">Install &amp; Setup</a>
+        <a href="#ide-dashboard" class="nav-item">Dashboard &amp; Sign In</a>
+        <a href="#ide-new-project" class="nav-item">Create a Project</a>
+        <a href="#ide-build" class="nav-item">Board Select, Build &amp; Flash</a>
+        <a href="#ide-troubleshooting" class="nav-item">Troubleshooting</a>
         <a href="#dev-mode" class="nav-item">Developer Mode</a>
 
         <div class="nav-group">Projects</div>
@@ -631,9 +679,27 @@
       tinkeringSub.classList.toggle('open', ['tinkering', 'tinkering-loop', 'api-ref'].includes(id));
 
       updatePagination(id);
+      hydrateShots();
       enableImageZoom();
 
       document.getElementById('main-scroll').scrollTo(0, 0);
+    }
+
+    // If a screenshot file exists at the placeholder's data-src path, swap it in.
+    // Otherwise the dashed placeholder stays. Drop a PNG at the path to fill it.
+    function hydrateShots() {
+      document.querySelectorAll('.shot[data-src]').forEach(shot => {
+        const src = shot.getAttribute('data-src');
+        const cap = shot.getAttribute('data-cap') || '';
+        const probe = new Image();
+        probe.onload = () => {
+          shot.innerHTML =
+            `<img src="${src}" alt="${cap}">` +
+            (cap ? `<div class="shot-cap">${cap}</div>` : '');
+          enableImageZoom();
+        };
+        probe.src = src;
+      });
     }
 
     function updatePagination(id) {
